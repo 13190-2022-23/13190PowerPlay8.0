@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.ServoImpl;
@@ -89,42 +90,43 @@ public final class ArmClass {
 
     }
 
+
     /**
      * Run during loop phase to run arm.
      * Dpad controls arm height and bumpers control arm turning and claw.
      */
-    public static void loop(Gamepad gamepad) {
+    public static void loop() {
 
         //dpad controls height. up/down for top/bottom and left/right for cycling
-        if (gamepad.dpad_up){
+        if (gamepad1.dpad_up){
             runLift( LiftTarget.TALL );
         }
 
-        if (gamepad.dpad_left) {
+        if (gamepad1.dpad_left) {
 
             runLift( curentLiftTarget.prev() );
 
         }
 
-        if (gamepad.dpad_right) {
+        if (gamepad1.dpad_right) {
 
             runLift( curentLiftTarget.next() );
 
         }
 
-        if (gamepad.dpad_down) {
+        if (gamepad1.dpad_down) {
 
             runLift( LiftTarget.JUNCTION );
 
         }
 
-        if (gamepad.left_bumper) {
+        if (gamepad1.left_bumper) {
 
             turnArm();
 
         }
 
-        if (gamepad.right_bumper) {
+        if (gamepad1.right_bumper) {
 
             runClaw();
 
@@ -138,20 +140,20 @@ public final class ArmClass {
     /**
      * this is to reset arm
      */
-    public static void stop() {
-
-        telemetry.addData("Stopping OpMode", "");
-        telemetry.update();
-
-        armServo.setPosition(0);
-        clawServo.setPosition(0);
-
-        liftMotor.setTargetPosition(0);
-
-        telemetry.addData("OpMode", "done");
-        telemetry.update();
-
-    }
+//    public void stop() {
+//
+//        telemetry.addData("Stopping OpMode", "");
+//        telemetry.update();
+//
+//        armServo.setPosition(0);
+//        clawServo.setPosition(0);
+//
+//        liftMotor.setTargetPosition(0);
+//
+//        telemetry.addData("OpMode", "done");
+//        telemetry.update();
+//
+//    }
 
   //the function section
 

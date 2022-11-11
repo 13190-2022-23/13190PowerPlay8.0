@@ -4,6 +4,10 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.ServoImpl;
+
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.*;
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.gamepad1;
 
 @TeleOp(name = "SurendraRobotCentricMecanumTeleOp", group = "MecanumBot")
 public class Surendra_Mecanum_Robot extends LinearOpMode {
@@ -15,6 +19,21 @@ public class Surendra_Mecanum_Robot extends LinearOpMode {
         DcMotor motorBackLeft = hardwareMap.dcMotor.get("lb");
         DcMotor motorFrontRight = hardwareMap.dcMotor.get("rf");
         DcMotor motorBackRight = hardwareMap.dcMotor.get("rb");
+
+        //Declar motors for Arm
+        DcMotor liftMotor = hardwareMap.dcMotor.get("arm_motor");
+        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setTargetPosition(0);
+        liftMotor.setMode( DcMotor.RunMode.RUN_TO_POSITION );
+
+        telemetry.addData("Lift motor", "initialized");
+        telemetry.update();
+
+        ServoImpl armServo = (ServoImpl) hardwareMap.servo.get("arm_servo");
+        ServoImpl clawServo = (ServoImpl) hardwareMap.servo.get("claw_servo");
+
+        telemetry.addData("Arm servos", "initialized");
+        telemetry.update();
 
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
@@ -62,6 +81,31 @@ public class Surendra_Mecanum_Robot extends LinearOpMode {
             motorBackLeft.setPower(backLeftPower);
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
+
+            //Had to recreate ArmClass here
+            int liftRange = 2849;
+
+            if (gamepad1.dpad_up){
+                liftMotor.setTargetPosition(liftRange);
+            }
+
+            if (gamepad1.dpad_down) {
+
+                liftMotor.setTargetPosition(0);
+
+            }
+
+//            if (gamepad1.left_bumper) {
+//
+//                turnArm();
+//
+//            }
+//
+//            if (gamepad1.right_bumper) {
+//
+//                runClaw();
+//
+//            }
         }
     }
 }
