@@ -4,9 +4,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 public class Slides {
     //create objects properties
     /*
@@ -20,7 +17,7 @@ public class Slides {
     }
 
     //the DCMotor used for the slides
-    protected DcMotor slideMotor = hardwareMap.dcMotor.get("slideMotor");;
+    protected DcMotor slideMotor;
 //    DcMotor slideMotor =
 
 

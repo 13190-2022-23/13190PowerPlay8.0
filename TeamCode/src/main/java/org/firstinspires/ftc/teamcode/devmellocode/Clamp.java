@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.devmellocode;
 
 import com.qualcomm.robotcore.hardware.Servo;
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
 
 public class Clamp {
     /*
@@ -10,7 +9,7 @@ public class Clamp {
      * @code clamp.setPosition(x);
      */
 //    protected Servo clamp;
-    protected Servo clamp = hardwareMap.servo.get("clamp");
+    protected Servo clamp;
     /*
      * The Clamp State
      * Toggles between true or false

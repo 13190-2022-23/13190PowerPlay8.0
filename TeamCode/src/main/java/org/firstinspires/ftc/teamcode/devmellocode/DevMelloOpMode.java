@@ -15,47 +15,59 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
  * @version 1.0
  * @since   2022-11-09
  */
-
-@TeleOp (name = "DevMelloOpMode")
+@TeleOp
 public class DevMelloOpMode extends LinearOpMode {
+    /*
+     * The Clamp Swervo
+     * @return Nothing
+     * @code clamp.setPosition(x);
+     */
+//    protected Servo clamp;
+//    /*
+//     * The Clamp State
+//     * Toggles between true or false
+//     * True = Clamp is closed
+//     * False = Clamp is open
+//     */
+//    protected boolean clampState = false;
+    //create objects properties
+    /*
+     * The ENUM for slide direction
+     * @param UP
+     * @param DOWN
+     */
+    enum DIRECTION {
+        UP,
+        DOWN
+    }
 
+    //the DCMotor used for the slides
+    protected DcMotor slideMotor;
     /*
      * DC Motors
      */
-//    protected DcMotor motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight;
-    DcMotor motorFrontLeft = hardwareMap.dcMotor.get("lf");
-    DcMotor motorBackLeft = hardwareMap.dcMotor.get("lb");
-    DcMotor motorFrontRight = hardwareMap.dcMotor.get("rf");
-    DcMotor motorBackRight = hardwareMap.dcMotor.get("rb");
+    protected DcMotor motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight;
     /*
      * Create a List for all the DC Motors to iterate through them faster.
-     */
-    protected DcMotor[] motors = {motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight};
     /*
      * The IMU
      */
-//    protected BNO055IMU imu;
-    BNO055IMU imu = hardwareMap.get(BNO055IMU.class, "imu");
-    /*
-     * The Slide Motor
-     */
-//    protected DcMotor slideMotor;
-    DcMotor slideMotor = hardwareMap.dcMotor.get("slideMotor");
+    protected BNO055IMU imu;
     /*
      * The Slide Class
      */
-    Slides slide = new Slides(slideMotor);
-    /*
-     * The Clamp
-     */
-//    protected Servo clamp;
-    Servo clamp = hardwareMap.servo.get("clamp");
-    /*
-     * The Clamp Class
-     */
-    Clamp clampServo = new Clamp(clamp);
     @Override
     public void runOpMode() throws InterruptedException {
+        // Declare our motors
+        // Make sure your ID's match your configuration
+        motorFrontLeft = hardwareMap.dcMotor.get("lf");
+        motorBackLeft = hardwareMap.dcMotor.get("lb");
+        motorFrontRight = hardwareMap.dcMotor.get("rf");
+        motorBackRight = hardwareMap.dcMotor.get("rb");
+
+        DcMotor[] motors = {motorFrontLeft, motorFrontRight, motorBackLeft, motorBackRight};
+
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
         // Reverse the right side motors
         // Reverse left motors if you are using NeveRests
         motorFrontLeft.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -66,8 +78,12 @@ public class DevMelloOpMode extends LinearOpMode {
             motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
-        //set the clamp servo to run using the given servo
-        clampServo.setClamp(clamp);
+        //declare the slides motor
+        slideMotor = hardwareMap.dcMotor.get("slideMotor");
+
+        //declare the clamp servo
+//        clamp = hardwareMap.servo.get("clamp");
+
 
         // Wait for the game to start (driver presses PLAY)
 
@@ -94,19 +110,45 @@ public class DevMelloOpMode extends LinearOpMode {
             motorFrontRight.setPower(frontRightPower);
             motorBackRight.setPower(backRightPower);
             //if driver clicks a on gamepad1, toggle the clampState
-            if (gamepad1.a) {
-                clampServo.setClampState();
-            }
+//            if (gamepad1.a) {
+//                setClampState();
+//            }
             //if driver clicks up on the dpad, move the slides up
             if (gamepad1.dpad_up) {
-                slide.move(Slides.DIRECTION.UP);
+                slideMotor.setPower(0.3);
+                slideMove(Slides.DIRECTION.UP);
             }
             //if driver clicks down on the dpad, move the slides down
             if (gamepad1.dpad_down) {
-                slide.move(Slides.DIRECTION.DOWN);
+                slideMotor.setPower(-0.3);
+                slideMove(Slides.DIRECTION.DOWN);
             }
 
 
         }
     }
+    protected int getSlidePos() {
+        return slideMotor.getCurrentPosition();
+    }
+
+    /**
+     * moves the slide to a targeted position
+     *
+     * @param direction the direction to move the slide
+     */
+    protected void slideMove(Slides.DIRECTION direction) {
+        if (direction == Slides.DIRECTION.UP) {
+            slideMotor.setTargetPosition((int) (slideMotor.getCurrentPosition() + 20));
+        } else if (direction == Slides.DIRECTION.DOWN) {
+            slideMotor.setTargetPosition((int) (slideMotor.getCurrentPosition() - 20));
+        }
+    }
+//    public void setClampState() {
+//        if (clampState) {
+//            //open clamp
+//            clamp.setPosition(0);
+//        } else {
+//            clamp.setPosition(1);
+//        }
+//    }
 }
