@@ -4,20 +4,25 @@ these should be the names for the different thingies
 
 ## Motors
 
-2 leftFront,
-3 rightFront,
-0 leftBack,
-1 rightBack
 
-only need these for BaseDriveOpMode^^^
+all on expansion hub:
+
+Type:
+goBILDA 5202/3/4 series
+
+Port 0: frontLeft
+
+Port 1: frontRight
+
+Port 2: backLeft
+
+Port 3: backRight
+
+
 ## Slides
 
 slideL
 , slideR
-
-## Arm
-
-arm1, arm2
 
 ## Claw
 

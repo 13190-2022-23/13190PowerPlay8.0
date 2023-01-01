@@ -25,17 +25,20 @@ public class OpModeTotal extends BaseTotalOpMode {
 
     private SlowMode slowMode;
 
+
     private DropCone dropCone;
 
     private GrabCone grabCone;
 
-    private LiftUp liftUp;
+    //slides
 
-    private LiftDown liftDown;
-    private Button slowtime, slideManip, clawManip;
+    private ManualLift manualLift;
 
-    private Button moveGround, moveLow, moveMedium, moveHigh, moveCancel, isUp, isDown;
+    private MoveToJunction moveToDefault, moveToGround, moveToLow, moveToMedium, moveToHigh;
 
+    private Button slowtime, clawManip, slideMovement;
+
+    private Button moveDefault, moveGround, moveLow, moveMedium, moveHigh;
 
 
     @Override
@@ -51,77 +54,85 @@ public class OpModeTotal extends BaseTotalOpMode {
 
             Left bumper -> toggles between slow mode and normal mode
 
-        Player2
-            START -> moveCancel (Cancel all current movement)
-            A -> moveGround (Ground junction)
-            X -> moveLow (Low junction)
-            B -> moveMedium (Medium junction)
-            Y -> moveHigh (High junction)
-              Y
-            X   B
-              A
-
-            right_bumper -> alternates between claw open and close
-            left_bumper -> alternates between arm forward and back
-            dpad_up -> slides go up
-            dpad_down -> slides go down
-
-
-
          */
 
         driverOp1 = new GamepadEx(gamepad1);
         driverOp2 = new GamepadEx(gamepad2);
 
-
+        //drive
         robotCentricDrive = new DefaultRobotCentricDrive(drive,
-                () -> driverOp1.getLeftX(),
-                () -> driverOp1.getRightY(),
+                () -> driverOp1.getRightX(),
+                () -> driverOp1.getLeftY(),
                 () -> driverOp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
                 () -> driverOp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
 
         slowMode = new SlowMode(drive,
-                () -> driverOp1.getLeftX(),
-                () -> driverOp1.getRightY(),
+                () -> driverOp1.getRightX(),
+                () -> driverOp1.getLeftY(),
                 () -> driverOp1.getTrigger(GamepadKeys.Trigger.LEFT_TRIGGER),
                 () -> driverOp1.getTrigger(GamepadKeys.Trigger.RIGHT_TRIGGER));
 
-        //TODO probably need to tune speedvalue inside of SlowMode to make this work properly
+
         slowtime = (new GamepadButton(driverOp1,
                 GamepadKeys.Button.LEFT_BUMPER)).toggleWhenPressed(robotCentricDrive,slowMode);
 
-        //toggles between open and close
+       /*
+        Player2
+            right_bumper -> resets slides to ground
+            dpad_down -> moveGround (Ground junction)
+            dpad_left -> moveLow (Low junction)
+            dpad_right -> moveMedium (Medium junction)
+            dpad_up -> moveHigh (High junction)
+
+
+            a -> alternates between claw open and close
+            b -> alternates between arm home and score
+
+            right joystick y-axis --> slides control
+         */
+
+        driverOp1 = new GamepadEx(gamepad1);
+
+        //toggles claw between open and close
         grabCone = new GrabCone(arm);
         dropCone = new DropCone(arm);
-        clawManip = (new GamepadButton(driverOp2, GamepadKeys.Button.RIGHT_BUMPER)).toggleWhenPressed(grabCone, dropCone);
+        clawManip = (new GamepadButton(driverOp2, GamepadKeys.Button.A)).toggleWhenPressed(grabCone, dropCone);
 
-        //manual lift code
-        liftUp = new LiftUp(arm);
-        isUp = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_UP)).whenPressed( liftUp);
+        //slides manual
+        manualLift = new ManualLift(arm, () -> driverOp2.getRightY());
 
-        liftDown = new LiftDown(arm);
-        isDown = (new GamepadButton(driverOp1, GamepadKeys.Button.DPAD_DOWN)).whenPressed(liftDown);
+        // automatic junction code
 
-        // automatic junction code [quite mid actually(since perkeet wrote it), everything else is w code(Since I wrote it)]
+        moveToDefault = new MoveToJunction(arm, ArmSubsystem.Junction.DEFAULT);
+        moveToGround = new MoveToJunction(arm, ArmSubsystem.Junction.GROUND);
+        moveToLow = new MoveToJunction(arm, ArmSubsystem.Junction.LOW);
+        moveToMedium = new MoveToJunction(arm, ArmSubsystem.Junction.MEDIUM);
+        moveToHigh = new MoveToJunction(arm, ArmSubsystem.Junction.HIGH);
+
+
+
         //TODO REMEMBER TO TUNE VALUES IN ArmSubsystem BEFORE TRYING TO USE
-        moveCancel = (new GamepadButton(driverOp2, GamepadKeys.Button.START)).whenPressed(
-                new SetJunction(arm, ArmSubsystem.Junction.NONE)
-        );
-        moveGround = (new GamepadButton(driverOp2, GamepadKeys.Button.A)).whenPressed(
-                new SetJunction(arm, ArmSubsystem.Junction.GROUND)
-        );
-        moveLow = (new GamepadButton(driverOp2, GamepadKeys.Button.X)).whenPressed(
-                new SetJunction(arm, ArmSubsystem.Junction.LOW)
-        );
-        moveMedium = (new GamepadButton(driverOp2, GamepadKeys.Button.B)).whenPressed(
-                new SetJunction(arm, ArmSubsystem.Junction.MEDIUM)
-        );
-        moveHigh = (new GamepadButton(driverOp2, GamepadKeys.Button.Y)).whenPressed(
-                new SetJunction(arm, ArmSubsystem.Junction.HIGH)        );
+        moveDefault = (new GamepadButton(driverOp2, GamepadKeys.Button.RIGHT_BUMPER))
+                .whenPressed(moveToDefault);
+
+        moveGround = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_DOWN))
+                .whenPressed(moveToGround);
+
+        moveLow = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_LEFT))
+                .whenPressed(moveToLow);
+
+        moveMedium= (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_RIGHT))
+                .whenPressed(moveToMedium);
+
+        moveHigh = (new GamepadButton(driverOp2, GamepadKeys.Button.DPAD_UP))
+                .whenPressed(moveToHigh);
+
+
 
 
 
         register(drive, arm);
         drive.setDefaultCommand(robotCentricDrive);
+        arm.setDefaultCommand(manualLift);
     }
 }

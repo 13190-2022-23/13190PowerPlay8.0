@@ -7,27 +7,28 @@ import java.util.function.DoubleSupplier;
 
 public class DefaultRobotCentricDrive extends CommandBase {
     private final DriveSubsystem drive;
-    private final DoubleSupplier strafeSpeed,  forwardSpeed, turnSpeedL, turnSpeedR;
+    private final DoubleSupplier strafeSpeed, forwardSpeed, turnSpeedL, turnSpeedR;
 
-    public DefaultRobotCentricDrive(DriveSubsystem drive, DoubleSupplier strafeSpeed, DoubleSupplier forwardSpeed,
-                                     DoubleSupplier turnSpeedL, DoubleSupplier turnspeedR){
+    public DefaultRobotCentricDrive(DriveSubsystem drive,
+                                    DoubleSupplier strafeSpeed,
+                                    DoubleSupplier forwardSpeed,
+                                    DoubleSupplier turnSpeedL,
+                                    DoubleSupplier turnspeedR) {
         this.drive = drive;
         this.strafeSpeed = strafeSpeed;
         this.forwardSpeed = forwardSpeed;
         this.turnSpeedL = turnSpeedL;
         this.turnSpeedR = turnspeedR;
 
-        //left trigger = negative
-        //right trigger = positive
-
-        //turn speed = -1*left_trigger + right trigger
-
         addRequirements(drive);
     }
 
     @Override
     public void execute() {
-        drive.driveRobotCentric(strafeSpeed.getAsDouble(), forwardSpeed.getAsDouble(),
-                turnSpeedL.getAsDouble(), turnSpeedR.getAsDouble());
+        drive.driveRobotCentric(
+                strafeSpeed.getAsDouble(),
+                forwardSpeed.getAsDouble(),
+                turnSpeedL.getAsDouble(),
+                turnSpeedR.getAsDouble());
     }
 }
